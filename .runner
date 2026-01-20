@@ -1,0 +1,60 @@
+@vars:
+  SESSION_NAME=laravel_dev_env
+  CMD=php artisan
+  LOCAL_IP=192.168.0.111
+
+main:
+  tmux new-session -d -s {{SESSION_NAME}} 'npm run dev' \; split-window -h '{{CMD}} serve' \; attach
+ds:
+  tmux new-session -d -s {{SESSION_NAME}} 'npm run dev -- --host={{LOCAL_IP}}' \; split-window -h '{{CMD}} serve --host={{LOCAL_IP}}' \; attach
+
+sf:
+  # forward local port to server to do a live test
+  ssh -N -R 0.0.0.0:1920:localhost:8000 shacks
+
+build:
+  npm run build
+
+b:
+  npm run build
+
+push:
+  git push gl master
+
+pull:
+  git pull gl master
+
+mc:
+  {{CMD}} make:controller {{1}}
+
+mcx:
+  {{CMD}} make:controller {{1}} --resource --requests --model={{2}}
+
+mm:
+  {{CMD}} make:migration
+
+mmm:
+  {{CMD}} make:model {{1}} --migration
+
+m:
+  {{CMD}} migrate
+
+mr:
+  {{CMD}} migrate:rollback
+
+rm:
+  {{CMD}} migrate:rollback
+  {{CMD}} migrate
+
+seed:
+  {{CMD}} db:seed --class={{1}}
+
+seed:permission:
+  {{CMD}} db:seed --class=PermissionSeeder
+
+
+archive:
+  bash bin/archive.sh
+
+
+# https://github.com/mhs003/runner
