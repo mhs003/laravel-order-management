@@ -22,7 +22,8 @@ enum OrderStatus: string
 
     }
 
-    public function canTransitionTo(OrderStatus $newStatus): bool {
+    public function canTransitionTo(OrderStatus $newStatus): bool
+    {
         if ($this === $newStatus) {
             return true;
         }
@@ -32,8 +33,9 @@ enum OrderStatus: string
         return \in_array($newStatus, $allowedTransitoins, true);
     }
 
-    public function label():string {
-        return match($this) {
+    public function label(): string
+    {
+        return match ($this) {
             self::PENDING => 'Pending',
             self::PROCESSING => 'Processing',
             self::COMPLETED => 'Completed',
@@ -42,7 +44,8 @@ enum OrderStatus: string
     }
 
 
-    public static function values():array {
+    public static function values(): array
+    {
         return array_column(self::cases(), 'value');
     }
 }
