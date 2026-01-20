@@ -342,4 +342,4 @@ curl -X GET http://localhost:8000/api/orders \
 - Part A: Conceptual answers in [`part-a.txt`](/part-a.txt)
 - Part B: Complete implementation (this repository)
 - Part C: Debugging analysis in [`part-c.md`](/part-c.md)
-- Part D: Engineering judgment in `part-d.txt`
+- Part D: Engineering judgment in [`part-d.txt`](/part-d.txt)
