@@ -1,66 +1,345 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# order management system
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A production-ready Order Management module demonstrating Laravel best practices.
 
-## About Laravel
+## assessment overview
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Role-based access control (Admin, Manager, Customer)
+- Policy-based authorization
+- Service layer architecture
+- Database transactions
+- Custom domain exceptions
+- Form request validation
+- Eloquent relationships and scopes
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## quick start
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### prerequisites
 
-## Learning Laravel
+- PHP 8.1 or higher
+- Composer
+- MySQL/PostgreSQL
+- Laravel 10.x
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### installation
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+# Clone the repository
+git clone https://github.com/mhs003/laravel-order-management
+cd laravel-order-management
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# Install dependencies
+composer install
 
-## Laravel Sponsors
+# Copy environment file
+cp .env.example .env
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Generate application key
+php artisan key:generate
 
-### Premium Partners
+# Configure database in .env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=order_management
+DB_USERNAME=root
+DB_PASSWORD=
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+# Run migrations
+php artisan migrate
 
-## Contributing
+# Seed test data
+php artisan db:seed
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Start the server
+php artisan serve
+```
 
-## Code of Conduct
+## test users
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+After seeding, you can use these credentials:
 
-## Security Vulnerabilities
+| Role      | Email                  | Password |
+|-----------|------------------------|----------|
+| Admin     | admin@example.com      | password |
+| Manager   | manager@example.com    | password |
+| Customer1 | customer1@example.com  | password |
+| Customer2 | customer2@example.com  | password |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## project structure
 
-## License
+```
+app/
+├── Enums/
+│   └── OrderStatus.php                 # Order status enum with transition logic
+├── Exceptions/
+│   └── InvalidOrderStatusTransitionException.php
+├── Http/
+│   ├── Controllers/
+│   │   └── OrderController.php         # Thin controller (delegates to service)
+│   │   └── AuthController.php          # Thin controller for user authentication (login)
+│   └── Requests/
+│       ├── StoreOrderRequest.php       # Validation for creating orders
+│       ├── UpdateOrderRequest.php      # Validation for updating orders
+│       └── LoginRequest.php            # Validation for login request
+├── Models/
+│   ├── Order.php                       # Order model with relationships
+│   ├── OrderItem.php                   # OrderItem model
+│   └── User.php                        # Extended User model
+├── Policies/
+│   └── OrderPolicy.php                 # Authorization rules
+└── Services/
+    ├── OrderService.php                # Business logic layer for order management
+    └── AuthService.php                 # Business logic layer for authentication (login)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+database/
+├── migrations/
+│   ├── xxxx_create_orders_table.php
+│   └── xxxx_create_order_items_table.php
+└── seeders/
+    ├── UserSeeder.php                  # Database seeder for users
+    ├── OrderSeeder.php                 # Database seeder for order
+    └── DatabaseSeeder.php              # ...
+
+routes/
+└── api.php                             # API routes
+
+part-a.txt                              # Conceptual answers
+part-d.txt                              # Engineering judgment answers
+```
+
+## authorization matrix
+
+| Action         | Admin | Manager | Customer        |
+|----------------|-------|---------|-----------------|
+| View All       | ✅    | ✅      | ❌ (own only)   |
+| View Single    | ✅    | ✅      | ✅ (own only)   |
+| Create         | ✅    | ❌      | ✅              |
+| Update Status  | ✅    | ✅      | ❌              |
+| Update Items   | ✅    | ❌      | ❌              |
+| Delete         | ✅    | ❌      | ❌              |
+
+## api endpoints
+
+### login
+```http
+POST /api/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "password"
+}
+```
+
+**Response:**
+```json
+{
+  "access_token": "...",
+  "token_type": "Bearer",
+  "user": {
+    "id": 12,
+    "name": "Admin User",
+    "email": "admin@example.com",
+    "role": "admin",
+    "email_verified_at": null,
+    "created_at": "2026-01-20T16:29:56.000000Z",
+    "updated_at": "2026-01-20T16:29:56.000000Z"
+  }
+}
+```
+
+### list orders
+```http
+GET /api/orders
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "user": {...},
+      "status": "pending",
+      "total_amount": "149.97",
+      "items_count": 2,
+      "created_at": "2024-01-15T10:30:00Z"
+    }
+  ]
+}
+```
+
+### create order
+```http
+POST /api/orders
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "items": [
+    {
+      "product_name": "Wireless Mouse",
+      "product_sku": "MOUSE-001",
+      "quantity": 2,
+      "unit_price": 29.99
+    }
+  ]
+}
+```
+
+### view order
+```http
+GET /api/orders/{id}
+Authorization: Bearer {token}
+```
+
+### update order status
+```http
+PUT /api/orders/{id}
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "status": "processing"
+}
+```
+
+### delete order
+```http
+DELETE /api/orders/{id}
+Authorization: Bearer {token}
+```
+
+
+_... See [`http_files/login.http`](/http_files/login.http) and [`http_files/order.http`](/http_files/order.http)_
+
+## key features
+
+### 1. status transition rules
+
+Valid transitions:
+- `pending` -> `processing` or `cancelled`
+- `processing` -> `completed` or `cancelled`
+- `completed` -> (terminal)
+- `cancelled` -> (terminal)
+
+Invalid transitions throw `InvalidOrderStatusTransitionException`.
+
+### 2. automatic total calculation
+
+Order totals are automatically calculated from order items:
+```php
+$order = Order::create(['user_id' => 1]);
+
+OrderItem::create([
+    'order_id' => $order->id,
+    'product_name' => 'Item 1',
+    'quantity' => 2,
+    'unit_price' => 10.00
+]);
+
+$order->refresh();
+echo $order->total_amount; // 20.00 (automatically calculated)
+```
+
+### 3. database transactions
+
+All modifications use transactions for data integrity:
+```php
+DB::transaction(function () {
+    // Create order
+    // Create items
+    // Calculate total
+    // All or nothing
+});
+```
+
+### 4. query scopes
+
+Reusable query scopes for common filters:
+```php
+// Get pending orders for a user
+Order::forUser($user)->status(OrderStatus::PENDING)->get();
+
+// Get recent orders with relationships
+Order::recent()->withCommonRelations()->get();
+```
+
+### 5. policy-based authorization
+
+No role checks in controllers:
+```php
+// Bad
+if ($user->role === 'admin') {
+    // ...
+}
+
+// Good
+$this->authorize('update', $order);
+```
+
+## testing
+
+### manual testing with cURL
+
+**Login:**
+```bash
+curl -X POST http://localhost:8000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@example.com",
+    "password": "password"
+  }'
+```
+
+Save the access token in a variable:
+```bash
+ADMIN_ACCESS_TOKEN="1|SAbGhtwYmoEEm4fUYrGLxB28pfNkUI7umvokS0sTd6a852e5"
+# similar for other roles
+MANAGER_ACCESS_TOKEN="8|zBysJQ1wQOxjNEjssLRqBFmhbrsgqSJq87qVuuqTd730ac0b"
+CUSTOMER_ACCESS_TOKEN="9|Uz7IVcegeOHnUqkwHxalA7S8mEFiC5DAw5jyIE7t205b03bc"
+```
+
+**Admin creates order for customer:**
+```bash
+curl -X POST http://localhost:8000/api/orders \
+  -H "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": 3,
+    "items": [
+      {
+        "product_name": "Laptop",
+        "quantity": 1,
+        "unit_price": 999.99
+      }
+    ]
+  }'
+```
+
+**Manager updates order status:**
+```bash
+curl -X PUT http://localhost:8000/api/orders/1 \
+  -H "Authorization: Bearer $MANAGER_ACCESS_TOKEN" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{"status": "processing"}'
+```
+
+**Customer views their orders:**
+```bash
+curl -X GET http://localhost:8000/api/orders \
+  -H "Authorization: Bearer $CUSTOMER_ACCESS_TOKEN"
+```
+
+---
+
+**Assessment Parts:**
+- Part A: Conceptual answers in [`part-a.txt`](/part-a.txt)
+- Part B: Complete implementation (this repository)
+- Part C: Debugging analysis in [`part-c.md`](/part-c.md)
+- Part D: Engineering judgment in `part-d.txt`

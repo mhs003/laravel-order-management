@@ -1,0 +1,41 @@
+@base=http://localhost:8000
+
+### login admin
+POST {{base}}/api/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "admin@example.com",
+    "password": "password"
+}
+
+### login manager
+POST {{base}}/api/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "manager@example.com",
+    "password": "password"
+}
+
+### login customer1
+POST {{base}}/api/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "customer1@example.com",
+    "password": "password"
+}
+
+### login customer2
+POST {{base}}/api/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "customer2@example.com",
+    "password": "password"
+}

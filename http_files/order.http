@@ -1,0 +1,59 @@
+@base=http://localhost:8000
+@authTokenAdmin=7|7Ywv9TOUsIvAFb6y91j4Sn7Mu5MVVNqt9nmAqAu8ef575f4f
+@authTokenManager=8|zBysJQ1wQOxjNEjssLRqBFmhbrsgqSJq87qVuuqTd730ac0b
+@authTokenCustomer1=9|Uz7IVcegeOHnUqkwHxalA7S8mEFiC5DAw5jyIE7t205b03bc
+@authTokenCustomer2=10|JBnsWtec7QR79TfXV72tOb2r6Nt1SPtNwz9moYfa3ce9ffc5
+
+
+# -----------------------
+# ------ For Admin ------
+# -----------------------
+
+### list all (for admin)
+GET {{base}}/api/orders
+Authorization: Bearer {{authTokenAdmin}}
+Accept: application/json
+Content-Type: application/json
+
+
+### create (for admin)
+POST {{base}}/api/orders
+Authorization: Bearer {{authTokenAdmin}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "user_id": 3,
+    "items": [
+        {
+        "product_name": "Test Test",
+        "quantity": 6,
+        "unit_price": 999.99
+        }
+    ]
+}
+
+
+# -----------------------
+# ----- For Manager -----
+# -----------------------
+
+### update status
+PUT {{base}}/api/orders/6
+Authorization: Bearer {{authTokenManager}}
+Accept: application/json
+Content-Type: application/json
+
+{"status": "processing"}
+
+
+
+# ----------------------
+# ---- For Customer ----
+# ----------------------
+
+### list all
+GET {{base}}/api/orders/
+Authorization: Bearer {{authTokenCustomer1}}
+Accept: application/json
+Content-Type: application/json
