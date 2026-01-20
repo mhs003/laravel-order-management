@@ -1,0 +1,102 @@
+-- A1:
+
+Question 1. Explain how Eloquent resolves relationships at runtime when accessing $post->comments.
+
+
+Answer:
+
+When accessing $post->comments, Eloquent does the following steps:
+1. Property access:
+Since 'comments' is not an actual property in the model, PHP invokes the __get() magic method.
+
+2. Attribute resolution
+The __get() method calls getAttribute('comments'), while checking if 'comments' is a regular attribute, accessor, or relationship.
+
+3. Relationship detection: Eloquent checks if a method names 'comments' exists on the model, if found it recognizes this as a relationship method.
+
+4. Lazy Loading:
+If the relationship hasn't been loaded yet (not in $relations array), Eloquent calls getRelationValue('comments') method. This executes the query defined in 'comments()' method.
+For 'hasMany' relation, it generates sql like:
+SELECT * FROM comments WHERE post_id = ?
+
+5. Result Caching:
+After loading, the query results are stored in '$relations' array, and any following accesses to the same relationship returns the cached collection without hitting the database.
+
+Then, the retrived results are returned with an Elequent Collection.
+
+
+--------------------------------------
+
+
+Question 2. When would you intentionally avoid Eloquent relationships in production systems and why?
+
+
+Answer:
+
+
+I would avoid Eloquent relationships in following scenarios:
+
+1. When updating or fetching thousands of rows, direct sql or query builder joins are significantly faster.
+
+2. When extremely high-performance is required, we must not rely on eloquent's relationships or an ORM mechanism.
+In some cases, such as, attribute casting and event firing, direct query building or raw sql offers better performance than ORM.
+
+3. When generating reports, we might need complex uses of GROUP BY, HAVING or MATCH...AGAINST (mysql). Eloquent query builder can become complex or hard to maintain at this time. In this case, raw sql would provide more readability and optimization control.
+
+4. In some pages (eg: Dashboard) queries, that must execute in <100ms. In such case, direct sql with proper indexing provides predictable performance.
+
+--------------------------------------
+
+-- A2
+
+
+Question 1. Identify the performance issue.
+
+
+Answer:
+
+The code suffers the N+1 query problem. The first query executes the sql, 'SELECT * FROM orders' (one query)
+And inside the loop, it is calling the 'user' relationship, which is not loaded. So, it triggers a seperate query for each order to fetch their users relation.
+We can think of a orders table with 200 rows. So, the first query will retrive all the 200 rows of orders (one query), and then each time inside the loop, it will execute a query to retrive all the order's user (200 queries);
+
+
+Question 2. Provide two different fixes and explain the trade-offs.
+
+Answer:
+
+1. Eager loading with 'with()':
+
+$orders = Order::with('user')->get();
+foreach ($orders as $order) {
+    echo $order->user->name;
+}
+
+Generated SQL:
+SELECT * FROM orders
+SELECT * FROM users WHERE id IN (...)
+
+
+Trade-offs:
+1. Reduces queryies from N+1 to 2. (One for orders, and another for all related users)
+2. Simples, readable, follows laravel's contentions.
+3. Automatic relationship hydration.
+4. Loads all users column, even if not used.
+5. Slightly higher memory usages, due to full model hydration.
+
+
+
+2. Eager loading with column selectoin:
+
+$orders = Order::with('user:id,name')->get();
+foreach ($orders as $order) {
+    echo $order->user->name;
+}
+
+Generated SQL:
+SELECT * FROM orders
+SELECT id, name FROM users WHERE id IN (...)
+
+
+Trade-offs:
+1. Still only 2 queries.
+2. Fixes the higher memory usage.
