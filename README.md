@@ -182,7 +182,6 @@ Content-Type: application/json
   "items": [
     {
       "product_name": "Wireless Mouse",
-      "product_sku": "MOUSE-001",
       "quantity": 2,
       "unit_price": 29.99
     }
