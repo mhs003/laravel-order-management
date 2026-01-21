@@ -155,23 +155,6 @@ GET /api/orders
 Authorization: Bearer {token}
 ```
 
-**Response:**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "user": {...},
-      "status": "pending",
-      "total_amount": "149.97",
-      "items_count": 2,
-      "created_at": "2024-01-15T10:30:00Z"
-    }
-  ]
-}
-```
-
 ### create order
 ```http
 POST /api/orders
